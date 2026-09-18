@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="UESAN.ECOMMERCE.API/UESAN.ECOMMERCE.API.csproj" />
+  <Project Path="UESAN.ECOMMERCE.CORE/UESAN.ECOMMERCE.CORE.csproj" />
+</Solution>
