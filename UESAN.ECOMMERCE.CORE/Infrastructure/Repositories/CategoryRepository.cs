@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UESAN.ECOMMERCE.CORE.Core.Entities;
+using UESAN.ECOMMERCE.CORE.Core.Interfaces;
 using UESAN.ECOMMERCE.CORE.Infrastructure.Data;
 
 namespace UESAN.ECOMMERCE.CORE.Infrastructure.Repositories
 {
-    public class CategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly StoreDbContext _dbContext;
 
@@ -17,9 +18,13 @@ namespace UESAN.ECOMMERCE.CORE.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Category>> GetCategories() 
+        public async Task<IEnumerable<Category>> GetCategories()
         {
-            var categories = await _dbContext.Category.ToListAsync();
+            var categories = await _dbContext.Category
+                .Where(c => c.IsActive == true)
+                
+
+                .ToListAsync();
             return categories;
         }
 
@@ -34,7 +39,8 @@ namespace UESAN.ECOMMERCE.CORE.Infrastructure.Repositories
 
         public async Task<bool> CreateCategory(Category category)
         {
-            _dbContext.Category.AddAsync(category);
+            category.IsActive = true;
+            await _dbContext.Category.AddAsync(category);
             var rows = await _dbContext.SaveChangesAsync();
             return rows > 0;
         }
@@ -45,7 +51,8 @@ namespace UESAN.ECOMMERCE.CORE.Infrastructure.Repositories
                                 .Category
                                 .Where(c => c.Id == category.Id)
                                 .FirstOrDefaultAsync();
-            if (existingCategory != null) {
+            if (existingCategory != null)
+            {
                 existingCategory.Description = category.Description;
                 var rows = await _dbContext.SaveChangesAsync();
                 return rows > 0;
